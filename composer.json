@@ -1,0 +1,24 @@
+{
+    "name": "huangfu/alipay",
+    "description": "支付宝支付SDK",
+    "keywords": [
+        "alipay",
+        "alipay-sdk"
+    ],
+    "require": {
+        "php":">=5.5.0",
+        "guzzlehttp/guzzle": "~6.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "huangfu",
+            "email": "hfpf@live.cn"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Alipay\\": "src/"
+        }
+    }
+}
