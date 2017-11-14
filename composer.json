@@ -1,5 +1,5 @@
 {
-    "name": "huangfu/alipay",
+    "name": "hfpf/alipay",
     "description": "支付宝支付SDK",
     "keywords": [
         "alipay",
@@ -12,7 +12,7 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "huangfu",
+            "name": "hfpf",
             "email": "hfpf@live.cn"
         }
     ],
