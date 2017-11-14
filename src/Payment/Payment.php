@@ -2,6 +2,8 @@
 
 namespace Alipay\Payment;
 
+use GuzzleHttp\Client;
+
 class Payment
 {
     //网关
@@ -50,8 +52,11 @@ class Payment
     /**
      * 获取订单支付参数
      * @param $order 订单参数信息
+     * @param null $returnUrl 如果为null则使用配置文件中指定的默认return_url(因为特
+     * 殊场景下支付成功后可能需要跳转的不同的页面)
+     * @param null $notifyUrl 如果为null则使用配置文件中指定的默认notify_url
      */
-    public function getPayParams(Order $order)
+    public function getPayParams(Order $order, $returnUrl = null, $notifyUrl = null)
     {
         //组装系统参数
         $sysParams["app_id"] = $this->appId;
@@ -63,12 +68,47 @@ class Payment
         $sysParams["terminal_type"] = null;
         $sysParams["terminal_info"] = null;
         $sysParams["prod_code"] = null;
-        $sysParams["notify_url"] = $this->notifyUrl;
-        $sysParams["return_url"] = $this->returnUrl;
+        $sysParams["notify_url"] = !empty($notifyUrl) ? $notifyUrl : $this->notifyUrl;
+        $sysParams["return_url"] = !empty($returnUrl) ? $returnUrl : $this->returnUrl;
         $sysParams["charset"] = $this->postCharset;
         $sysParams["biz_content"] = $order->getBizContent();
         $sysParams["sign"] = $this->generateSign($sysParams, $this->signType);
         return $sysParams;
+    }
+
+    /**
+     * 发起退款
+     * @param $outTradeNo 商户订单号.
+     * @param $refundAmount 退款金额
+     * @param $outRequestNo 退款原因
+     */
+    public function refund($outTradeNo
+        , $refundAmount
+        , $outRequestNo)
+    {
+
+        $order = new RefundOrder($outTradeNo, $refundAmount, $outRequestNo);
+        $parameters = $this->getPayParams($order);
+        $client = new Client();
+        $params = ['form_params' => $parameters];
+        $response = $client->request('POST', $this->gatewayUrl, $params);
+        $response = $response->getBody();
+        return json_decode($response);
+    }
+
+    /**
+     * 统一收单交易退款
+     * @param $outTradeNo 商户订单号
+     */
+    public function query($outTradeNo)
+    {
+        $order = new QueryOrder($outTradeNo);
+        $parameters = $this->getPayParams($order);
+        $client = new Client();
+        $params = ['form_params' => $parameters];
+        $response = $client->request('POST', $this->gatewayUrl, $params);
+        $response = $response->getBody();
+        return json_decode($response);
     }
 
     /** rsaCheckV1 & rsaCheckV2
