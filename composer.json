@@ -7,7 +7,8 @@
     ],
     "require": {
         "php":">=5.5.0",
-        "guzzlehttp/guzzle": "~6.2"
+        "guzzlehttp/guzzle": "~6.2",
+        "monolog/monolog": "~1.11",
     },
     "license": "MIT",
     "authors": [
@@ -19,6 +20,9 @@
     "autoload": {
         "psr-4": {
             "Alipay\\": "src/"
-        }
+        },
+        "files": [
+            "src/AopEncrypt.php"
+        ]
     }
 }

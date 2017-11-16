@@ -33,6 +33,8 @@ class Payment
 
     public $returnUrl = '';
 
+    const RESPONSE_SUFFIX = "_response";
+
     public function __construct(array $config)
     {
         $this->appId = $config['app_id'];
@@ -81,6 +83,7 @@ class Payment
      * @param $outTradeNo 商户订单号.
      * @param $refundAmount 退款金额
      * @param $outRequestNo 退款原因
+     * @return mixed|\Psr\Http\Message\ResponseInterface
      */
     public function refund($outTradeNo
         , $refundAmount
@@ -89,11 +92,26 @@ class Payment
 
         $order = new RefundOrder($outTradeNo, $refundAmount, $outRequestNo);
         $parameters = $this->getPayParams($order);
-        $client = new Client();
-        $params = ['form_params' => $parameters];
-        $response = $client->request('POST', $this->gatewayUrl, $params);
-        $response = $response->getBody();
-        return json_decode($response);
+        return $this->post($parameters);
+    }
+
+
+    /**
+     * 验签退款接口的response
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @return bool
+     */
+    public function rsaCheckForRefund(\Psr\Http\Message\ResponseInterface $response)
+    {
+        $responseBody = $response->getBody();
+        $result = json_decode($responseBody, true);
+        $refundResponse = $result['alipay_trade_refund_response'];
+        $result['alipay_trade_refund_response'] = json_encode($refundResponse);
+        if ($this->rsaCheckV1($result, 'RSA2')) { // 验签成功
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
