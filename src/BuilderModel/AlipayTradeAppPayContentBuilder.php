@@ -46,7 +46,7 @@ class AlipayTradeAppPayContentBuilder
 
     public function __construct()
     {
-        $this->bizContentarr['product_code'] = "FAST_INSTANT_TRADE_PAY";
+        $this->bizContentarr['product_code'] = "QUICK_MSECURITY_PAY";
     }
 
     public function AlipayTradeWapPayContentBuilder()
