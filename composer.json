@@ -8,7 +8,7 @@
     "require": {
         "php":">=5.5.0",
         "guzzlehttp/guzzle": "~6.2",
-        "monolog/monolog": "~1.11",
+        "monolog/monolog": "~1.11"
     },
     "license": "MIT",
     "authors": [
