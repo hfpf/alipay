@@ -8,7 +8,7 @@
 # Installation
 安装最新版本
 ```bash
-$ composer require monolog/monolog
+$ composer require hfpf/alipay
 ```
 # Basic Usage
 ```php
