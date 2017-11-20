@@ -61,6 +61,8 @@ class AopClient {
 
 	protected $alipaySdkVersion = "alipay-sdk-php-20161101";
 
+    public $logPath = '';
+
 	public function generateSign($params, $signType = "RSA") {
 		return $this->sign($this->getSignContent($params), $signType);
 	}
@@ -254,25 +256,24 @@ class AopClient {
 
 
 	protected function logCommunicationError($apiName, $requestUrl, $errorCode, $responseTxt) {
-//		$localIp = isset ($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"] : "CLI";
-//		$logger = new LtLogger;
-//        $logger = new Logger('alipay');
-//        $file = '/tmp'. '/' . "logs/aop_comm_err_" . $this->appId . "_" . date("Y-m-d") . ".log";
-//        $logger->pushHandler(new StreamHandler($file, Logger::WARNING));
-//		$logger->conf["log_file"] = rtrim(AOP_SDK_WORK_DIR, '\\/') . '/' . "logs/aop_comm_err_" . $this->appId . "_" . date("Y-m-d") . ".log";
-//		$logger->conf["separator"] = "^_^";
-//		$logData = array(
-//			date("Y-m-d H:i:s"),
-//			$apiName,
-//			$this->appId,
-//			$localIp,
-//			PHP_OS,
-//			$this->alipaySdkVersion,
-//			$requestUrl,
-//			$errorCode,
-//			str_replace("\n", "", $responseTxt)
-//		);
-//		$logger->log($logData);
+		$localIp = isset ($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"] : "CLI";
+        if (!empty($this->logPath)) {
+            $logger = new Logger('alipay');
+            $steam = new StreamHandler($this->logPath);
+            $logger->pushHandler($steam);
+            $logData = array(
+                date("Y-m-d H:i:s"),$
+                $apiName,
+                $this->appId,
+                $localIp,
+                PHP_OS,
+                $this->alipaySdkVersion,
+                $requestUrl,
+                $errorCode,
+                str_replace("\n", "", $responseTxt)
+            );
+            $logger->addError(var_export($logData, true));
+        }
 	}
 
     /**
